@@ -29,7 +29,6 @@ void heapInit (void* heap, size_t size, size_t base);
  */
 uint8_t* heapAlloc (uint16_t size);
 
-
 /**
  * @brief Освобождение выделенной памяти
  * 

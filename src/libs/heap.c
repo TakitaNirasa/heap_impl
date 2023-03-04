@@ -96,6 +96,3 @@ void heapFree (uint8_t* mem)
 		memset(infoBlock, 0, sizeof (memIntro_t));
 	}
 }
-
-
-

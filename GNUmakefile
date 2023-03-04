@@ -49,9 +49,13 @@ $(eval $(foreach _,$(OUT),$(call LINK,$(OUT),$(OBJS))))
 
 # Фейковая цель для сборки проекта
 .PHONY: all
-all: $(OUT)
+all: $(OUTDIR) $(OUT)
 
-# Фейковая цель clean для очистки от артефактов
+# Цель для создания директории с артефактами
+$(OUTDIR):
+	$(if $V,, &&)mkdir $(OUTDIR)
+
+# Фейковая цель clean для очистки папки build
 .PHONY: clean
 clean:
 	$(if $V,,@printf "$(RED)CLEAN$(NORM)\n" &&)rm -rf $(OUTDIR)*
