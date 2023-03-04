@@ -15,7 +15,7 @@ TEST_CXXFLAGS = -c -std=c++17 $(TEST_FLAGS) $(COMPILE_FLAGS)
 
 # Линкер и его флаги
 TEST_LINK = g++
-TEST_LINKFLAGS = -g -lgtest -lgtest_main -lgmock -lgcov --coverage -lpthread
+TEST_LINKFLAGS = -g -lgtest -lgtest_main -lgcov --coverage -lpthread
 
 # Исходники
 TEST_SRC = $(TESTS_DIR)$(TESTS)
@@ -31,12 +31,12 @@ tests : runtests
 # Выполнение теста
 .PHONY: runtests
 runtests : $(TEST_OUT)
-	$(if $V,,@printf "$(GREEN)RUNNING TESTS$(NORM)\n" &&)./$(TEST_OUT)
+	$(if $V,,@printf "$(YELLOW)RUNNING TESTS$(NORM)\n" &&)./$(TEST_OUT)
 
 # Компиляция
 $(TEST_OBJ) : $(TEST_SRC)
-	$(if $V,,@printf "$(GREEN)COMPILING TESTS$(NORM)\n" &&)$(TEST_CXX) $(TEST_CXXFLAGS) $(TEST_FLAG_GEN_GCDA) -o $@ $<
+	$(if $V,,@printf "$(YELLOW)BUILD TESTS$(NORM)\n" &&)$(TEST_CXX) $(TEST_CXXFLAGS) $(TEST_FLAG_GEN_GCDA) -o $@ $<
 
 # Линковка
 $(TEST_OUT) : $(TEST_OBJ)
-	$(if $V,,@printf "$(GREEN)LINK TESTS$(NORM)\n" &&)$(TEST_LINK) $^ $(TEST_LINKFLAGS) -o $@
+	$(if $V,,@printf "$(YELLOW)LINK TESTS$(NORM)\n" &&)$(TEST_LINK) $^ $(TEST_LINKFLAGS) -o $@

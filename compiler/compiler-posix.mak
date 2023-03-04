@@ -6,7 +6,7 @@ LFLAGS = -g
 # $1 Исходник
 define COMPILE
 $(OUTDIR)$(notdir $(patsubst %.c,%.o,$1)): $1
-	$(if $V,,@printf "$(GREEN)COMPILE SRC$(NORM) %s\n" $$< &&)$$(CC) $$(FLAGS) $$< -o $$@
+	$(if $V,,@printf "$(GREEN)BUILD SRC$(NORM) %s\n" $$< &&)$$(CC) $$(FLAGS) $$< -o $$@
 
 endef
 

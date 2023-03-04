@@ -5,15 +5,15 @@ int main(void)
 {
 	uint8_t mass [1000];
 
-	heapInit (mass, sizeof(mass));
-	uint8_t* whereAmI = alloc (16);
+	heapInit (mass, sizeof(mass), sizeof (size_t));
+	uint8_t* whereAmI = heapAlloc (16);
 	whereAmI[0] = 22;
-	uint8_t* whereAmI2 = alloc (20);
+	uint8_t* whereAmI2 = heapAlloc (20);
 	whereAmI2[0] = 255;
-	free (whereAmI);
-	whereAmI = alloc (32);
+	heapFree (whereAmI);
+	whereAmI = heapAlloc (32);
 	whereAmI[0] = 22;
-	free (whereAmI);
+	heapFree (whereAmI);
 
     return 0;
 }

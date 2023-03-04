@@ -7,7 +7,7 @@ LFLAGS = -mmcu=atxmega256a3 -g -o
 # $1 Исходник
 define COMPILE
 $(OUTDIR)$(notdir $(patsubst %.c,%.o,$1)): $1
-	$(if $V,,@echo COMPILE $$< &&)$$(CC) $$(FLAGS) $$@ $$<
+	$(if $V,,@printf "$(GREEN)BUILD SRC$(NORM) %s\n" $$< &&)$$(CC) $$(FLAGS) $$@ $$<
 
 endef
 
@@ -16,6 +16,6 @@ endef
 # $2 Список объектников
 define LINK
 $1: $2
-	$(if $V,,@echo LINK $$@ &&)$$(CC) $$(LFLAGS) $(OUTDIR)$(patsubst %,%.elf,$$@) $2
+	$(if $V,,@printf "$(GREEN)LINK $(NORM) %s\n" $$< &&)$$(CC) $$(LFLAGS) $(OUTDIR)$(patsubst %,%.elf,$$@) $2
 
 endef

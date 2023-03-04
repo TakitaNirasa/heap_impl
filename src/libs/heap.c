@@ -2,6 +2,7 @@
 
 #include "string.h"
 
+// TODO запаковать!!!
 /**
  * @brief Структура служебной информации блока данных
  */
@@ -27,13 +28,12 @@ static uint16_t heapSize;
  */
 static const uint8_t nidl = 0x77;
 
-/**
- * @brief Инициализация кучи
- * @param [in] heap Указатель на начало кучи
- * @param [in] size размер кучи
- */
-void heapInit (void* heap, uint16_t size)
+void heapInit (void* heap, size_t size, size_t base)
 {
+	// Проверка входных параметров
+	if (heap == NULL || size < sizeof (memIntro_t))
+		return;
+	// Блок начала разметки памяти
 	memIntro_t initBlock = {
 		.niddle = nidl,
 		.sizeOfBlock = 0,
@@ -45,13 +45,10 @@ void heapInit (void* heap, uint16_t size)
 	memcpy(heapPtr, &initBlock, sizeof (initBlock));	
 }
 
-/**
- * @brief Выделение памяти в куче
- * @param [in] size Размер выделяемой памяти 
- * @return Указатель на выделенную память (NULL если выделить память не удалось)
- */
-uint8_t* alloc (uint16_t size)
+uint8_t* heapAlloc (uint16_t size)
 {
+	if (heapPtr == NULL)
+		return NULL;
 	memIntro_t* mem = NULL;
 	uint8_t* ptr = heapPtr;	
 	// Поиск последнего блока
@@ -89,13 +86,9 @@ uint8_t* alloc (uint16_t size)
 	return NULL;	
 }
 
-/**
- * @brief Освобождение выделенной памяти
- * @param [in] mem Указатель на начало выделенной памяти
- */
-void free (uint8_t* mem)
+void heapFree (uint8_t* mem)
 {
-	if (mem < (heapPtr + sizeof (memIntro_t)) && mem > heapPtr + heapSize)
+	if (heapPtr == NULL || mem < (heapPtr + sizeof (memIntro_t)) || mem > heapPtr + heapSize)
 		return;
 	memIntro_t* infoBlock = (memIntro_t*)(mem - sizeof (memIntro_t));
 	if (infoBlock->niddle == nidl && infoBlock->startOfBlock == mem)
