@@ -2,7 +2,7 @@
 
 #include "string.h"
 
-// TODO запаковать!!!
+#pragma pack(push, 1)
 /**
  * @brief Структура служебной информации блока данных
  */
@@ -12,6 +12,7 @@ typedef struct memIntro_s
 	uint16_t sizeOfBlock;		/*<! Размер блока данных (без учёта служебной структуры)	*/	
 	uint8_t* startOfBlock;		/*<! Указатель на начало блока пользовательских данных		*/
 }memIntro_t;
+#pragma pack (pop)
 
 /**
  * @brief Указатель на начало кучи

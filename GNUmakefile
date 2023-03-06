@@ -53,7 +53,7 @@ all: $(OUTDIR) $(OUT)
 
 # Цель для создания директории с артефактами
 $(OUTDIR):
-	$(if $V,, &&)mkdir $(OUTDIR)
+	$(if $V,,)mkdir $(OUTDIR)
 
 # Фейковая цель clean для очистки папки build
 .PHONY: clean

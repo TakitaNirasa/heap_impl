@@ -9,7 +9,7 @@
  *      heapFree (mass);
  * 
  */
-#include  <stdint.h>
+#include <stdint.h>
 #include <stddef.h>
 
 /**
