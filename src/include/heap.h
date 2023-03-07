@@ -13,13 +13,17 @@
 #include <stddef.h>
 
 /**
+ * @brief Макрос хранящий размер переменной хранящей размера данных
+ */
+#define block_size_t size_t
+
+/**
  * @brief Инициализация кучи
  *
  * @param [in] heap Указатель на начало кучи
  * @param [in] size Размер кучи
- * @param [in] base Разрядность платформы, байт
  */
-void heapInit (void* heap, size_t size, size_t base);
+void heapInit (void* heap, block_size_t size);
 
 /**
  * @brief Выделение памяти в куче
@@ -27,11 +31,11 @@ void heapInit (void* heap, size_t size, size_t base);
  * @param [in] size Размер выделяемой памяти 
  * @return Указатель на выделенную память (nullptr если выделить память не удалось)
  */
-uint8_t* heapAlloc (uint16_t size);
+block_size_t* heapAlloc (block_size_t size);
 
 /**
  * @brief Освобождение выделенной памяти
  * 
  * @param [in] mem Указатель на начало выделенной памяти
  */
-void heapFree (uint8_t* mem);
+void heapFree (block_size_t* mem);

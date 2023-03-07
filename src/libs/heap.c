@@ -2,98 +2,79 @@
 
 #include "string.h"
 
-#pragma pack(push, 1)
+#pragma pack (push, 1)
 /**
  * @brief Структура служебной информации блока данных
  */
-typedef struct memIntro_s
+typedef struct mem_s
 {
-	uint8_t niddle;				/*<! Иголка - значение ключ для поиска служебной структуры	*/
-	uint16_t sizeOfBlock;		/*<! Размер блока данных (без учёта служебной структуры)	*/	
-	uint8_t* startOfBlock;		/*<! Указатель на начало блока пользовательских данных		*/
-}memIntro_t;
+    void* this;			/*<! Указатель на данную структуру		*/
+    void* next;			/*<! Указатель на следующую структуру	*/
+    block_size_t size;	/*<! Размер выделяемых данных			*/
+}mem_t;
 #pragma pack (pop)
+
+/**
+ * @brief Размер структуры начала блока данных в единицах сдвига указателя (словах)
+ * @note Высчитывается с учётом архитектуры
+ * 16 байт на 64битной архитектуре будет 2 слова
+ * 18 байт на 64битной архитектуре будет 3 слова
+ */
+const block_size_t memStructSize = (sizeof (mem_t) / sizeof (block_size_t)) + 
+									(sizeof (mem_t) & (sizeof (block_size_t) - 1) ? 1 : 0);
 
 /**
  * @brief Указатель на начало кучи
  */
-static uint8_t* heapPtr;
+static block_size_t* heapPtr;
 
-/**
- * @brief Размер кучи
- */
-static uint16_t heapSize;
-
-/**
- * @brief Значение иголки
- */
-static const uint8_t nidl = 0x77;
-
-void heapInit (void* heap, size_t size, size_t base)
+void heapInit (void* heap, block_size_t size)
 {
 	// Проверка входных параметров
-	if (heap == NULL || size < sizeof (memIntro_t))
+	if (heap == NULL || size < sizeof (mem_t))
 		return;
 	// Блок начала разметки памяти
-	memIntro_t initBlock = {
-		.niddle = nidl,
-		.sizeOfBlock = 0,
-		.startOfBlock = (uint8_t*)heap + sizeof (memIntro_t)
-	};
-	heapPtr = (uint8_t*)heap;
-	heapSize = size;
-	memset(heapPtr, 0, size);
-	memcpy(heapPtr, &initBlock, sizeof (initBlock));	
+	mem_t intro = {
+        .this = heap,
+        .next = heap + memStructSize,
+        .size = size
+    };
+	heapPtr = (block_size_t*)heap;
+	memset(heapPtr, 0, size * sizeof (block_size_t));
+	memcpy(heapPtr, &intro, sizeof (mem_t));	
 }
 
-uint8_t* heapAlloc (uint16_t size)
+block_size_t* heapAlloc (block_size_t size)
 {
-	if (heapPtr == NULL)
+	if (heapPtr == NULL || size == 0)
 		return NULL;
-	memIntro_t* mem = NULL;
-	uint8_t* ptr = heapPtr;	
-	// Поиск последнего блока
-	// TODO  добавить определение расстояния между блоками данных
-	for (uint16_t i = 0; i < (heapSize - 4); i++)
+
+	const mem_t* mem = (mem_t*)heapPtr;
+
+	// Если начальный указатель не инициализирован и указателя на следующий блок нет
+	if (mem->this != mem || mem->next != mem->this + memStructSize)
+		return NULL;
+	
+	block_size_t heapSize = mem->size;
+
+	const block_size_t* endPtr = (block_size_t*)(mem + size);
+
+	for (mem_t* ptr = (mem_t*)mem->next; ptr < (mem_t*)endPtr;)
 	{
-		// Обнаружена "иголка"
-		if (ptr[i] == nidl)
+		// Если следующий элемент существует
+		if (ptr->next == ((mem_t*)(ptr->next))->this)
 		{
-			// Разбираемся, то ли мы нашли
-			memIntro_t* memPtr = (memIntro_t*)&ptr[i];
-			// Элемент startOfBlock должен быть равен началу сегмента
-			if (memPtr->startOfBlock == (ptr + i + sizeof (memIntro_t)))
-				mem = (memIntro_t*)(ptr+i);	// Сохраняем
+			ptr = ptr->next;
 		}
-	}
-	// Не нашли никакой иголки
-	if (mem == NULL)
-		return NULL;
-	// Сохраняем расположение нового блока памяти
-	ptr =  mem->startOfBlock + mem->sizeOfBlock;
-	if (ptr + sizeof (memIntro_t) + size < heapPtr + heapSize)
-	{
-		// Записываем данные
-		memIntro_t initBlock = {
-		.niddle = nidl,
-		.sizeOfBlock = size,
-		.startOfBlock = ptr + sizeof (memIntro_t),
-		};
-		memcpy (ptr, &initBlock, sizeof (memIntro_t));
-		// Подчищаем
-		memset (initBlock.startOfBlock, 0, size);
-		return initBlock.startOfBlock;
+		else
+		{
+
+		}
+
 	}
 	return NULL;	
 }
 
-void heapFree (uint8_t* mem)
+void heapFree (block_size_t* mem)
 {
-	if (heapPtr == NULL || mem < (heapPtr + sizeof (memIntro_t)) || mem > heapPtr + heapSize)
-		return;
-	memIntro_t* infoBlock = (memIntro_t*)(mem - sizeof (memIntro_t));
-	if (infoBlock->niddle == nidl && infoBlock->startOfBlock == mem)
-	{
-		memset(infoBlock, 0, sizeof (memIntro_t));
-	}
 }

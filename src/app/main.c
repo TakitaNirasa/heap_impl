@@ -1,19 +1,26 @@
 #include "../include/heap.h"
 #include "stdint.h"
+#include "stdio.h"
+
+void show_ptr (void* data, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        if ((i & 7) == 0)
+    		printf ("\r\n 0x%02lx ", i+1);
+        printf ("0x%08lx\t", ((uint64_t*)data)[i]);
+    }
+    printf ("\r\n");
+
+}
 
 int main(void)
 {
-	uint8_t mass [1000];
+	
+	uint64_t mass[100];
 
-	heapInit (mass, sizeof(mass), sizeof (size_t));
-	uint8_t* whereAmI = heapAlloc (16);
-	whereAmI[0] = 22;
-	uint8_t* whereAmI2 = heapAlloc (20);
-	whereAmI2[0] = 255;
-	heapFree (whereAmI);
-	whereAmI = heapAlloc (32);
-	whereAmI[0] = 22;
-	heapFree (whereAmI);
+	heapInit (mass, sizeof (mass) / sizeof (size_t));
+	show_ptr (mass, sizeof (mass) / sizeof (size_t));
 
     return 0;
 }
