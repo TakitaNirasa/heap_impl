@@ -110,16 +110,15 @@ block_size_t* heapAlloc (block_size_t size)
 
 void heapFree (block_size_t* mem)
 {
-	printf ("sizeptr %p \r\n", mem - 3);
 	if (heapPtr == NULL || mem == NULL || mem < heapPtr + (memStructSize * 2))
 		return;
 
-	mem_t* infoBlock = (mem_t*)(mem-3);
+	mem_t* infoBlock = (mem_t*)(mem-memStructSize);
 	
 	// Если блок существует и правильно инициализирован
 	//if (infoBlock->memBlock != NULL &&  infoBlock->memBlock == infoBlock && 
 	//	infoBlock->next - infoBlock->memBlock)
 
-	block_size_t size = (((mem_t*)(mem-3))->next - ((mem_t*)(mem-3))->memBlock) * sizeof (block_size_t);
+	block_size_t size = (infoBlock->next - infoBlock->memBlock) * sizeof (block_size_t);
 	memset(infoBlock, 0, size);
 }

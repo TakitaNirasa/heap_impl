@@ -19,14 +19,16 @@ int main(void)
 	
 	uint64_t mass[100];
 
+    printf ("heapInit\r\n");
 	heapInit (mass, sizeof (mass) / sizeof (size_t));
 	show_ptr (mass, sizeof (mass) / sizeof (size_t));
+    printf ("heapAlloc\r\n");
     uint64_t* ptr = (uint64_t *)heapAlloc (10);
 	show_ptr (mass, sizeof (mass) / sizeof (size_t));
+    printf ("heapAlloc\r\n");
     uint64_t* ptr1 = (uint64_t *)heapAlloc (11);
+    printf ("heapFree\r\n");
     heapFree (ptr);
-    ptr = (uint64_t *)heapAlloc (4);
-    ptr = (uint64_t *)heapAlloc (1);
 	show_ptr (mass, sizeof (mass) / sizeof (size_t));
 
     return 0;
