@@ -15,7 +15,9 @@
 /**
  * @brief Макрос хранящий размер переменной хранящей размера данных
  */
+#ifndef block_size_t
 #define block_size_t size_t
+#endif
 
 /**
  * @brief Инициализация кучи

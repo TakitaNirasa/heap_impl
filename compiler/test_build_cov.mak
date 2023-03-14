@@ -14,29 +14,26 @@ TEST_CXX = g++
 TEST_CXXFLAGS = -c -std=c++17 $(TEST_FLAGS) $(COMPILE_FLAGS)
 
 # Линкер и его флаги
-TEST_LINK = g++
+TEST_LINKER = g++
 TEST_LINKFLAGS = -g -lgtest -lgtest_main -lgcov --coverage -lpthread
 
-# Исходники
-TEST_SRC = $(TESTS_DIR)$(TESTS)
-# Объектники
-TEST_OBJ = $(OUTDIR)$(patsubst %.cpp,%.o,$(TESTS))
-# Исполняемый файл
-TEST_OUT = $(OUTDIR)$(patsubst %.cpp,%,$(TESTS))
+# Исполняемые файлы
+TEST_OUT = $(addprefix $(OUTDIR),$(notdir $(patsubst %.cpp,%,$(TESTS))))
 
-# Запуск всего процесса сборки и выполнения теста
+# Запуск всего процесса сборки и выполнения тестов
 .PHONY: tests
 tests : runtests
 
-# Выполнение теста
+# Выполнение тестов
 .PHONY: runtests
-runtests : $(TEST_OUT)
-	$(if $V,,@printf "$(YELLOW)RUNNING TESTS$(NORM)\n" &&)./$(TEST_OUT)
+runtests : $(notdir $(TEST_OUT))
 
-# Компиляция
-$(TEST_OBJ) : $(TEST_SRC)
-	$(if $V,,@printf "$(YELLOW)BUILD TESTS$(NORM)\n" &&)$(TEST_CXX) $(TEST_CXXFLAGS) $(TEST_FLAG_GEN_GCDA) -o $@ $<
+# Компиляция исходника, линковка, запуск
+# $1 Исходник
+define TEST_COMPILE
+$(notdir $(patsubst %.cpp,%,$1)): $1
+	$(if $V,,@printf "$(YELLOW)MAKE TEST$(NORM) %s\n" $$< &&)$(TEST_CXX) $(TEST_CXXFLAGS) $(TEST_FLAG_GEN_GCDA) -o $(OUTDIR)$(notdir $(patsubst %.cpp,%.o,$1)) $$<
+	$(if $V,,@printf ""&&)$(TEST_LINKER) $(OUTDIR)$(notdir $(patsubst %.cpp,%.o,$1)) $(TEST_LINKFLAGS) -o $(OUTDIR)$$@
+	./$(OUTDIR)$(notdir $(patsubst %.cpp,%,$1))
 
-# Линковка
-$(TEST_OUT) : $(TEST_OBJ)
-	$(if $V,,@printf "$(YELLOW)LINK TESTS$(NORM)\n" &&)$(TEST_LINK) $^ $(TEST_LINKFLAGS) -o $@
+endef

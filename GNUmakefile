@@ -15,7 +15,9 @@ OBJS = $(addprefix $(OUTDIR),$(notdir $(patsubst %.c,%.o,$(SRC))))
 # Папка с исходниками тестов
 TESTS_DIR = tests/
 # Тесты (один, так как лень ещё один макрос писать)
-TESTS = heap_test.cpp
+TESTS = $(wildcard $(TESTS_DIR)*.cpp)
+# Объектники 
+TEST_OBJS = $(addprefix $(OUTDIR),$(notdir $(patsubst %.cpp,%.o,$(TESTS))))
 # Наименование выходного файла
 OUT = main
 
@@ -41,11 +43,14 @@ include compiler/test_build_cov.mak
 # Файл с целями для генерации покрытия
 include compiler/coverage.mak
 
-# Генерация правил компилции
+# Генерация правил компиляции исходников
 $(eval $(foreach _,$(SRC),$(call COMPILE,$_,$1)))
 
-# Генерация правила линковки
+# Генерация правила линковки исходников
 $(eval $(foreach _,$(OUT),$(call LINK,$(OUT),$(OBJS))))
+
+# Генерация правил компиляции и запуска тестов
+$(eval $(foreach _,$(TESTS),$(call TEST_COMPILE,$_,$1)))
 
 # Фейковая цель для сборки проекта
 .PHONY: all

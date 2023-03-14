@@ -38,7 +38,7 @@ static block_size_t* heapPtr = NULL;
 static block_size_t* putBlock (void* ptr, block_size_t size)
 {
 	mem_t block = {
-        .memBlock = ptr,
+        .memBlock = (block_size_t*)ptr,
         .next = (block_size_t*)ptr + memStructSize + size,
         .size = size
     };
@@ -56,7 +56,7 @@ void heapInit (void* heap, block_size_t size)
 		return;
 	// Блок начала разметки памяти
 	mem_t intro = {
-        .memBlock = heap,
+        .memBlock = (block_size_t*)heap,
         .next = (block_size_t*)heap + memStructSize,
         .size = size
     };
@@ -94,15 +94,22 @@ block_size_t* heapAlloc (block_size_t size)
 		{
 			// Проход по элементам в поиске следующего (если места хватает, то выделение памяти)
 			block_size_t* ptr = (block_size_t*)blockPtr;
+
 			for (;ptr < endPtr; ptr++)
 			{
-				// Найден указатель на следующий элемент
-				if (((mem_t*)ptr)->memBlock == ptr)
-					break;
 				// Если хватает места для помещения блока памяти со структурой блока	
-				else if (ptr - (block_size_t*)blockPtr <= (size + sizeof (block_size_t)) + memStructSize)
-					return putBlock (ptr, size);
-			}	
+				if ((block_size_t)(ptr - (block_size_t*)blockPtr) >= size + memStructSize)
+					return putBlock (blockPtr, size);
+				// Найден указатель на следующий элемент
+				else if (((mem_t*)ptr)->memBlock == ptr)
+				{
+					blockPtr = (mem_t*)ptr;
+					break;
+				}
+			}
+			if (ptr >= endPtr - 1)
+				return NULL;
+
 		}
 	}
 	return NULL;	
