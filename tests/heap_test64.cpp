@@ -3,10 +3,18 @@
 
 #define block_size_t uint64_t
 #include "../src/libs/heap.c"
+
+
+class Heap64BitTest : public ::testing::Test
+{
+protected:
+    uint64_t mass [1000];
+};
+
 /**
  * @brief Тест инициализации обозначения места под кучу
  */
-TEST (testInitHeap64, HeapTest)
+TEST (Heap64BitTest, InitTest)
 {
     // Неверные параметры
     heapInit (nullptr, 100);

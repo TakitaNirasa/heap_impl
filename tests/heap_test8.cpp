@@ -3,10 +3,17 @@
 
 #define block_size_t uint8_t
 #include "../src/libs/heap.c"
+
+class Heap8BitTest : public ::testing::Test
+{
+protected:
+    uint8_t mass [1000];
+};
+
 /**
  * @brief Тест инициализации обозначения места под кучу
  */
-TEST (testInitHeap8, HeapTest)
+TEST (Heap8BitTest, HeapTest)
 {
     // Неверные параметры
     heapInit (nullptr, 100);
