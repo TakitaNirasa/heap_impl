@@ -96,7 +96,7 @@ block_size_t* heapAlloc (block_size_t size)
 			// Проход по элементам в поиске следующего (если места хватает, то выделение памяти)
 			block_size_t* ptr = (block_size_t*)blockPtr;
 
-			for (;ptr < endPtr; ptr++)
+			for (;ptr <= endPtr; ptr++)
 			{
 				// Если хватает места для помещения блока памяти со структурой блока	
 				if ((block_size_t)(ptr - (block_size_t*)blockPtr) >= size + memStructSize)
