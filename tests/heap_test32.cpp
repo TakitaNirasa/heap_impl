@@ -72,7 +72,7 @@ TEST (Heap32BitTest, InitTest)
 /**
  * @brief Тест выделения места под кучу
  */
-TEST (Heap64BitTest, HeapAllocTest)
+TEST (Heap32BitTest, HeapAllocTest)
 {
     // Массив для кучи
     uint32_t mass [100];
@@ -127,7 +127,7 @@ TEST (Heap64BitTest, HeapAllocTest)
 /**
  * @brief Тест очистки участков памяти
  */
-TEST (Heap64BitTest, HeapFreeTest)
+TEST (Heap32BitTest, HeapFreeTest)
 {
     // Массив для кучи
     uint32_t mass [100];
