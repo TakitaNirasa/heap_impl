@@ -4,7 +4,7 @@
 #
 
 # Общие флаги компилятора
-TEST_FLAGS = -g -Wno-unused-result -Wall -gdwarf -DDEBUG -D__HOST__ -D_GNU_SOURCE  -MMD -I$(TESTS_DIR) -I. -fno-exceptions -fno-inline
+TEST_FLAGS = -g -Wno-unused-result -Wall -Wno-narrowing -gdwarf -DDEBUG -D__HOST__ -D_GNU_SOURCE  -MMD -I$(TESTS_DIR) -I. -fno-exceptions -fno-inline
 
 # Флаг генерации .gcda файлов
 TEST_FLAG_GEN_GCDA = -fprofile-arcs -ftest-coverage

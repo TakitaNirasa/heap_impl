@@ -16,8 +16,8 @@ protected:
 /**
  * @brief Сравнить адрес два элемента массива uint32 с адресом, который должен там храниться
  * 
- * @param mass Указатель на массив данных
- * @param addr Указатель который должен храниться в \p mass
+ * @param [in] mass Указатель на массив данных
+ * @param [in] addr Указатель который должен храниться в \p mass
  */
 void addr_compare (uint32_t* const  mass, uint32_t* const addr)
 {
@@ -53,7 +53,6 @@ TEST (Heap32BitTest, InitTest)
 
     // Проверка начального адреса
     addr_compare (mass, mass);
-    
     // Проверка элемента, указывающего на следующий элемент
     addr_compare (mass + 2, mass + 5);
     EXPECT_EQ (mass[4], 1);
@@ -106,7 +105,6 @@ TEST (Heap32BitTest, HeapAllocTest)
     // Блок памяти битый
     mass[0] = 0;
     EXPECT_EQ (heapAlloc (5), nullptr);
-    heapFree (mass);
     memset (mass, 0, sizeof (mass));
 
     heapInit (mass, 25);
@@ -140,15 +138,43 @@ TEST (Heap32BitTest, HeapFreeTest)
 {
     // Массив для кучи
     uint32_t mass [100];
-    memset (mass, 0, sizeof (mass));
+    memset (mass, 255, sizeof (mass));
 
     // Проверка на входные параметры
     heapFree (nullptr);
-    heapInit (mass, 25);
+    // Тест неверных указателей очистки инициализированной кучи
+    heapInit (mass + 1, 40);
+    heapFree (mass);
+    addr_compare (mass + 1, mass + 1);
     heapFree (nullptr);
 
+    // Очистка по указателю на второй элемент 
+    heapFree (mass + 2);
+    addr_compare (mass + 1, mass + 1);
+    
+    uint32_t* block = heapAlloc (5);
+    EXPECT_NE (block, nullptr);
+    *(block - memStructSize) = 20;
+    heapFree (block);
+    *(block - memStructSize) = 0;
+    heapFree (block);
+    // Удаление только указателя на кучу
+    heapFree (mass + 1);
+
+    // Проверка, что инициализация запустилась заново
+    heapInit (mass, 25);
+
+    // Проверка начального адреса
     addr_compare (mass, mass);
+    // Проверка элемента, указывающего на следующий элемент
     addr_compare (mass + 2, mass + 5);
-    EXPECT_EQ (mass[4], 25 - memStructSize);
+    EXPECT_EQ (mass[4], 25-memStructSize);
+
+    // Проверка на маловероятное событие  равенства размера структуре
+    mass [1] += sizeof (uint64_t);
     heapFree (mass);
+    EXPECT_NE (mass[0], 0);
+    EXPECT_NE (mass[1], 0);
+    EXPECT_NE (mass[2], 0);
+    memset (mass, 0, sizeof (mass));
 }

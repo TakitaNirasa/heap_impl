@@ -117,20 +117,27 @@ block_size_t* heapAlloc (block_size_t size)
 
 void heapFree (block_size_t* mem)
 {
-	if (heapPtr == NULL || mem == NULL)// || mem < heapPtr + (memStructSize * 2))
+	if (heapPtr == NULL || mem == NULL)
+		return;
+	if  (mem < heapPtr)
 		return;
 
+	// Блок памяти для очистки
 	mem_t* infoBlock;
+	// Деинициализация кучи
 	if (heapPtr == mem)
 	{
 		infoBlock = (mem_t*)mem;
 		heapPtr = NULL;
 	}
-	else
+	// Очистка одного блока
+	else if (heapPtr + memStructSize <= mem)
 		infoBlock = (mem_t*)(mem-memStructSize);
-	
+	else
+		return;
+
 	// Если блок существует и правильно инициализирован
-	if (infoBlock->memBlock == NULL ||  (infoBlock->memBlock != NULL && infoBlock->memBlock != (block_size_t*)infoBlock))
+	if (infoBlock->memBlock == NULL || (infoBlock->memBlock != (block_size_t*)infoBlock))
 		return;
 
 	// Проверка на указатели
@@ -138,6 +145,6 @@ void heapFree (block_size_t* mem)
 	block_size_t size_n = infoBlock->size + memStructSize;
 
 	// Очистка выбранного блока или деинициализация всей кучи
-	if (size_p == size_n || (size_p == memStructSize && size_n > memStructSize))
-		memset(infoBlock, 0, size_n * sizeof (block_size_t));
+	if (size_p == size_n || size_p == memStructSize)
+		memset(infoBlock, 0, size_n * sizeof (block_size_t));	
 }
