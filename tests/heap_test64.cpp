@@ -107,6 +107,15 @@ TEST (Heap64BitTest, HeapAllocTest)
     // Блок не полностью помещается в память
     EXPECT_EQ (heapAlloc (3), nullptr);
     heapFree (mass);
+
+    // Мусор в куче
+    heapInit (mass, 10);
+    memset (mass + memStructSize, 255, (10 - memStructSize) * 8);
+    // |начальный блок|-|блок1|-|1 слов|
+    EXPECT_EQ (heapAlloc (1), mass + (memStructSize * 2));
+    // Блок не полностью помещается в память
+    EXPECT_EQ (heapAlloc (3), nullptr);
+    heapFree (mass);
 }
 
 /**
