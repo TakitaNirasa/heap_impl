@@ -1,7 +1,7 @@
 /**
  * @file heap.h
- * @author Никита Тарасов (nikitatarasov@gmail.com)
- * @brief Библиотека динамического выделения выделения памяти
+ * @author Никита Тарасов (anikitatarasov@gmail.com)
+ * @brief Библиотека динамического выделения памяти
  * usage:
  * 
  *      #define block_size_t uintXX_t
