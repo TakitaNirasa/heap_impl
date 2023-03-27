@@ -9,3 +9,8 @@
 # Описание содержимого структур
 
 ![Image](https://github.com/TakitaNirasa/heap_impl/blob/main/doc/heap_t.drawio.png)
+
+Для сборки проекта ввести: 
+```make all```  
+Для сборки тестов и генерации файла покрытия:  
+```make coverage```
