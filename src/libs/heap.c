@@ -1,7 +1,6 @@
 #include "../include/heap.h"
 
 #include "string.h"
-#include "stdio.h"
 
 /**
  * @brief Структура служебной информации блока данных
