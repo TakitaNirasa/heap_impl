@@ -1,2 +1,2 @@
 TARGET=posix
-MCU=atxmega256a3
+MCU=
